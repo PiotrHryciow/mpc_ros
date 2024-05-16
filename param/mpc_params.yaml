@@ -1,0 +1,25 @@
+# --------- mpc params ---------
+mpc_params:
+
+# time horizon
+  prediction_horizon: 10
+  control_horizon: 5
+  time_step: 0.2
+
+# constraints
+  acc_max: 0.2 # in m/s^2
+  acc_min: -0.5 # in m/s^2
+  steering_angles: 0.3 # max steering angle in radians
+  v_max: 1 # in m/s
+  v_min: -0.2 # in m/s
+
+# --------- robot params ---------
+robot_params:
+  Lf: 0.25  # in m
+
+# --------- ros params ---------
+ros_params:
+  sub_position_topic: "/odom_combined"
+  sub_path_topic: "/set_path"
+  pub_control_topic: "/cmd_vel"
+  # pub_rate: 5

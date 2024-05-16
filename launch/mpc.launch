@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="mpc" type="mainMPC.py" name="mpc" output="screen">
+	<rosparam file="$(find mpc)/param/mpc_params.yaml" command="load" />
+   </node>
+
+</launch>
