@@ -51,6 +51,7 @@ class MPCDriver:
         # for iterating path
         self.i = 0
         while not rospy.is_shutdown():
+            # print("xd")
 
             if not ((self.path.size / 2) < self.control_horizon):
 
@@ -72,7 +73,13 @@ class MPCDriver:
                 self.control_msg.linear.x = self.vel
                 self.control_msg.angular.z = self.controls_list[1, 0]
 
-                self.control_pub.publish(self.control_msg)
+                if self.i > self.path.size / 2 and (
+                    (ref[0, 1] - self.position[0]) + (ref[1, 1] - self.position[1])
+                    < 0.01
+                ):
+                    print("dojechalem")
+                else:
+                    self.control_pub.publish(self.control_msg)
 
                 self.i += 1
             # end of controll loop
@@ -138,12 +145,14 @@ class MPCDriver:
         # return x, y, z, roll_x, pitch_y, yaw_z
 
     def path_callback(self, path_ref: PoseArray):
+        print(1)
         path_x = []
         path_y = []
         for pose in path_ref.poses:
-            path_x.append(pose.point.x)
-            path_y.append(pose.point.y)
-        self.path = np.array([[path_x], [path_y]])
+            path_x.append(pose.position.x)
+            path_y.append(pose.position.y)
+        self.path = np.array([path_x, path_y])
+        print(self.path)
         self.i = 0
 
 

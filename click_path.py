@@ -2,7 +2,14 @@
 
 import geometry_msgs.msg
 import rospy
-from geometry_msgs.msg import PoseArray, Vector3, Pose, Quaternion, PoseStamped
+from geometry_msgs.msg import (
+    PoseArray,
+    Vector3,
+    Pose,
+    Quaternion,
+    PoseStamped,
+    PointStamped,
+)
 import geometry_msgs
 
 # from tf.msg import tfMessage
@@ -67,7 +74,7 @@ def transform_point(point, translation, rotation):
 
 
 def generate_path():
-    rospy.init_node("path_gen", anonymous=True)
+    rospy.init_node("path_click", anonymous=True)
 
     # header = geometry_msgs.msg.
     # header.stamp = rospy.Time()  # Get the current time
@@ -75,18 +82,14 @@ def generate_path():
 
     original_pose_stamped = PoseStamped()
     # original_pose_stamped.header = header
+    global point_list_x, point_list_y
 
     pub_path = rospy.Publisher("/set_path", PoseArray, queue_size=10)
     sub_tf = rospy.Subscriber("/tf", TFMessage, tf_callback)
-    # point_list_x = np.array(
-    #     [-0.16, 0.5, 0.96, 1.37, -0.044, -0.71, -2.89, -3.47, -3.2, -2.7, 0.32]
-    # )
-    # point_list_y = np.array(
-    #     [4.7, 1.3, -0.64, -3.44, -4.92, -4.83, -4.72, -1.93, -0.66, 0.033, 0.417]
-    # )
-    point_list_x = np.array([-1.07, -0.26, 0.655, 0.878, 1.052])
-    point_list_y = np.array([0.348, 0.388, -0.014, -1.03, -2.41])
-    point_nr = 20
+    sub_click = rospy.Subscriber("/clicked_point", PointStamped, point_callback)
+    point_list_x = np.array(0)
+    point_list_y = np.array(0)
+    point_nr = 5
     path = PoseArray()
     path.header.frame_id = "odom"
     rate = rospy.Rate(10)  # 10hz
@@ -97,16 +100,17 @@ def generate_path():
     # plt.show()
 
     input("Press Enter to send PoseArray")
+    # print(point_list_x)
 
     pose_list = []
-    for i in range(point_list_x.size - 1):
+    for i in range(1, point_list_x.size - 1):
         x = np.linspace(point_list_x[i], point_list_x[i + 1], num=point_nr)
         y = np.linspace(point_list_y[i], point_list_y[i + 1], num=point_nr)
         for j in range(point_nr):
             pose = Pose()
             pose.position.x = x[j]
             pose.position.y = y[j]
-            print(pose)
+            # print(pose)
             # print(trans)
             pose = transform_point(pose, trans, rot)
             print(pose)
@@ -127,13 +131,19 @@ def generate_path():
 def tf_callback(transform: TFMessage):
     for tf in transform.transforms:
         if tf.header.frame_id == "map" and tf.child_frame_id == "odom":
-            print("dostalem")
+            # print("dostalem")
             global trans, rot
             # print(tf.transform.translation)
             trans = tf.transform.translation
             # print(trans)
             rot = tf.transform.rotation
             # print(translation)
+
+
+def point_callback(point: PointStamped):
+    global point_list_x, point_list_y
+    point_list_x = np.append(point_list_x, point.point.x)
+    point_list_y = np.append(point_list_y, point.point.y)
 
 
 if __name__ == "__main__":
