@@ -84,8 +84,12 @@ def generate_path():
     # point_list_y = np.array(
     #     [4.7, 1.3, -0.64, -3.44, -4.92, -4.83, -4.72, -1.93, -0.66, 0.033, 0.417]
     # )
-    point_list_x = np.array([-1.07, -0.26, 0.655, 0.878, 1.052])
-    point_list_y = np.array([0.348, 0.388, -0.014, -1.03, -2.41])
+    point_list_x = np.array([-0.16, 0.5])
+    point_list_y = np.array([4.7, 1.3])
+    # point_list_x = np.array([-1.07, -0.26, 0.655, 0.878, 1.052])
+    # point_list_y = np.array([0.348, 0.388, -0.014, -1.03, -2.41])
+    # point_list_x = np.array([0.5, 0.58])
+    # point_list_y = np.array([0.89, 0.111])
     point_nr = 20
     path = PoseArray()
     path.header.frame_id = "odom"

@@ -2,16 +2,18 @@
 mpc_params:
 
 # time horizon
-  prediction_horizon: 10
-  control_horizon: 5
+  # prediction_horizon: 10
+  control_horizon: 10
   time_step: 0.2
+  R: 10
+
 
 # constraints
   acc_max: 0.2 # in m/s^2
   acc_min: -0.5 # in m/s^2
   steering_angles: 0.3 # max steering angle in radians
-  v_max: 1 # in m/s
-  v_min: -0.2 # in m/s
+  v_max: 0 # in m/s
+  v_min: -0.5 # in m/s
 
 # --------- robot params ---------
 robot_params:

@@ -14,11 +14,11 @@ class ModelPredictiveControl(object):
 
     """
 
-    def __init__(self, N: int, dt: float, params: list, constraints: list):
+    def __init__(self, N: int, dt: float, params: np.array, constraints: np.array):
 
         Lf = params[0]
         self.Q = np.diag([1, 1])
-        self.R = np.diag([10])
+        self.R = params[1]
 
         # The history states and controls
         self.states_list = np.zeros((4, N + 1))
@@ -45,10 +45,10 @@ class ModelPredictiveControl(object):
         # x[x,y,psi,v], u[a, delta]
         f = lambda x, u: casadi.vertcat(
             *[
-                x[0] + x[3] * casadi.cos(x[2]) * dt,
-                x[1] + x[3] * casadi.sin(x[2]) * dt,
-                x[2] + (x[3] / Lf) * u[1] * dt,
-                x[3] + u[0] * dt,
+                x[0] + x[3] * casadi.cos(x[2]) * dt,  # dx
+                x[1] + x[3] * casadi.sin(x[2]) * dt,  # dy
+                x[2] + (x[3] / Lf) * u[1] * dt,  # dpsi
+                x[3] + u[0] * dt,  # dv
             ]
         )
         # --------- set model equations ---------
