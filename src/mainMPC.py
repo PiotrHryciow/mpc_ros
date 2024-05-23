@@ -50,8 +50,6 @@ class MPCDriver:
         self.save_v = []
         self.path_save = []
         self.saved = 0
-        self.save_odom_pos = []
-        self.save_odom_orient = []
 
         self.df = pd.DataFrame()
         self.params_df = pd.DataFrame()
@@ -165,8 +163,6 @@ class MPCDriver:
             position.pose.pose.position.z,
         ]
         # print(self.position)
-        self.save_odom_orient.append(self.orientation)
-        self.save_odom_pos.append(self.position)
 
         # return x, y, z, roll_x, pitch_y, yaw_z
 
