@@ -8,7 +8,6 @@ from geometry_msgs.msg import PoseArray  # for path
 from MPC import ModelPredictiveControl
 from math_func import euler_from_quaternion
 import numpy as np
-import pandas as pd
 
 
 class MPCDriver:
@@ -40,20 +39,6 @@ class MPCDriver:
 
         # to give time for all the information from other topics
         rospy.sleep(2)
-
-        # to save data into csv
-        self.save_a = []
-        self.save_delta = []
-        self.save_x = []
-        self.save_y = []
-        self.save_psi = []
-        self.save_v = []
-        self.path_save = []
-        self.saved = 0
-
-        self.df = pd.DataFrame()
-        self.params_df = pd.DataFrame()
-        self.path_df = pd.DataFrame()
 
         # initialize all publishers
         self.publishers_setup()
@@ -91,17 +76,12 @@ class MPCDriver:
                     < 0.05
                 ):
                     print("arrived")
-                    if not self.saved:
-                        self.saved = 1
-                        self.save_to_csv()
 
                 else:
                     self.control_pub.publish(self.control_msg)
-                    self.save_to_list()
 
                 self.i += 1
             # end of controll loop
-            # print("xd")
             self.hz.sleep()
 
     def load_params(self):
@@ -174,36 +154,6 @@ class MPCDriver:
             path_y.append(pose.position.y)
         self.path = np.array([path_x, path_y])
         self.i = 0
-
-    def save_to_csv(self):
-        self.df["control_a"] = self.save_a
-        self.df["control_delta"] = self.save_delta
-        self.df["state_x"] = self.save_x
-        self.df["state_y"] = self.save_y
-        self.df["state_psi"] = self.save_psi
-        self.df["state_v"] = self.save_v
-        # self.df["state_list"] = self.states_list_save
-        self.path_df["path_x"] = self.path[0, :]
-        self.path_df["path_y"] = self.path[1, :]
-        self.params_df["params"] = [
-            self.Lf,
-            self.R,
-            self.ts,
-            self.control_horizon,
-            self.constraints,
-        ]
-        df_save = pd.concat([self.params_df, self.df, self.path_df], axis=1)
-        df_save.to_csv("~/mgr/wyniki/tylem2.csv")
-
-    def save_to_list(self):
-        # saving each input iteration
-        self.save_a.append(self.controls_list[0])
-        self.save_delta.append(self.controls_list[1])
-        self.save_x.append(self.states_list[0])
-        self.save_y.append(self.states_list[1])
-        self.save_psi.append(self.states_list[2])
-        self.save_v.append(self.states_list[3])
-
 
 def main():
     rospy.init_node("mpc_driver", anonymous=True)
